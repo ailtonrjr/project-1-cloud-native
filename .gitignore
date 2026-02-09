@@ -1,0 +1,22 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter / misc
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Local outputs
+plots/
+task1_analysis/plots/
+task3_serverless/simulated_nosql/*.json
+
+# Logs
+*.log
