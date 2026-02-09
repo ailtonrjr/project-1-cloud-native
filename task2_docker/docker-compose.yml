@@ -1,0 +1,8 @@
+services:
+  diet-analysis:
+    image: diet-analysis:latest
+    container_name: diet-analysis-compose
+    volumes:
+      - ../:/app
+    working_dir: /app
+    command: ["python", "task1_analysis/data_analysis.py"]
