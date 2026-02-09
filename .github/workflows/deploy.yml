@@ -50,42 +50,14 @@ jobs:
         run: |
           docker build -t diet-analysis:latest -f task2_docker/Dockerfile .
 
-      # OPTIONAL: Push to Docker Hub
-      # Add secrets DOCKERHUB_USERNAME and DOCKERHUB_TOKEN in GitHub repo settings
       - name: Log in to Docker Hub
-        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push image to Docker Hub (optional)
-        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+      - name: Push image to Docker Hub
         run: |
           docker tag diet-analysis:latest ${{ secrets.DOCKERHUB_USERNAME }}/diet-analysis:latest
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/diet-analysis:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/diet-analysis:latest
 
-deploy_vm:
-  needs: push_image
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && secrets.VM_HOST != '' }}
-
-    steps:
-      - name: Deploy via SSH (optional)
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          script: |
-            set -e
-            cd ~/Project-1 || true
-            if [ -d ".git" ]; then
-              git pull
-            else
-              git clone ${{ github.server_url }}/${{ github.repository }}.git ~/Project-1
-              cd ~/Project-1
-            fi
-
-            docker build -t diet-analysis:latest -f task2_docker/Dockerfile .
-            docker run --rm diet-analysis:latest
